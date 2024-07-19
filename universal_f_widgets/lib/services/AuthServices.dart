@@ -62,19 +62,32 @@ class AuthService with ChangeNotifier {
           "Something went wrong during signup");
     }
   }
-
   Future<void> forgotPassword(String email) async {
-    // ... YOUR ACTUAL FORGOT PASSWORD LOGIC HERE ...
-    // Replace this with your real forgot password implementation
-    // Example using a simple validation (you'll likely use an API):
-    if (email.contains('@')) {
-      // ... send a password reset link to the email address
-      // ... handle success (e.g., display a message to the user)
-      notifyListeners();
-    } else {
-      // ... forgot password failed (e.g., invalid email)
-      // ... handle error (e.g., display a snackbar)
-      throw Exception('Invalid email');
+    final response = await _repository.post(
+      path: 'auth/forgat-password/otp',
+      dataMapper: (data) => data,
+      data: {
+        'username': email,
+      },
+    );
+
+    if (!response.isSuccess) {
+      throw Exception(response.message);
+    }
+  }
+
+  Future<void> verifyOtp(String email, String otp) async {
+    final response = await _repository.post(
+      path: 'auth/varify-otp',
+      dataMapper: (data) => data,
+      data: {
+        'username': email,
+        'otp': otp,
+      },
+    );
+
+    if (!response.isSuccess) {
+      throw Exception(response.message);
     }
   }
 
@@ -87,6 +100,19 @@ class AuthService with ChangeNotifier {
     Navigator.pushNamedAndRemoveUntil(context, '/login',
         ModalRoute.withName('/')); // Navigate to login screen
   }
+  Future<void> resetPassword(String username, String newPassword) async {
+    final response = await _repository.post(
+      path: 'auth/reset-password',
+      dataMapper: (data) => data,
+      data: {
+        'username': username,
+        'password': newPassword,
+      },
+    );
 
+    if (!response.isSuccess) {
+      throw Exception(response.message);
+    }
+  }
 // ... other auth methods (signup, forgot password)
 }

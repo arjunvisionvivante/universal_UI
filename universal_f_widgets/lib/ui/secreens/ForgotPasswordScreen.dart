@@ -6,7 +6,6 @@ import 'package:universal_f_widgets/ui/widgets/LoadingIndicator.dart';
 import 'package:universal_f_widgets/utils/ValidationHelper.dart';
 import 'package:universal_f_widgets/viewmodels/ForgotPasswordViewModel.dart';
 
-
 class ForgotPasswordScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -27,12 +26,11 @@ class ForgotPasswordScreen extends StatelessWidget {
                       hintText: 'Email',
                       validator: ValidationHelper.validateEmail,
                     ),
-
+                    SizedBox(height: 20),
                     ElevatedButton(
-                   onPressed: viewModel.isLoading ? null : () => viewModel.validateForm(context),
+                      onPressed: viewModel.isLoading ? null : () => viewModel.validateForm(context),
                       child: Text('Send Reset Link'),
                     ),
-
                     if (viewModel.isLoading) LoadingIndicator(),
                   ],
                 ),
