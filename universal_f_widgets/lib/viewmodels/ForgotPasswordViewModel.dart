@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:universal_f_widgets/services/AuthServices.dart';
 
+import '../ui/secreens/OtpScreen.dart';
 
 class ForgotPasswordViewModel with ChangeNotifier {
   final formKey = GlobalKey<FormState>();
@@ -11,40 +12,36 @@ class ForgotPasswordViewModel with ChangeNotifier {
   // Input controller
   final emailController = TextEditingController();
 
-  // ... getters and setters for controllers
-
   bool get isLoading => _isLoading;
 
-  // Form Validation
-  void validateForm(context) {
+  void validateForm(BuildContext context) {
     if (formKey.currentState!.validate()) {
-      // Proceed with sending the reset link
       sendResetLink(context);
     }
   }
 
-  // Send Reset Link Method
-  Future<void> sendResetLink(context) async {
+  Future<void> sendResetLink(BuildContext context) async {
     _isLoading = true;
     notifyListeners();
 
-    final authService = Provider.of<AuthService>(
-        // Global context if needed
-         context, 
-        listen: false);
-
+    final authService = Provider.of<AuthService>(context, listen: false);
     final email = emailController.text.trim();
 
     try {
       await authService.forgotPassword(email);
-      // Success handling (e.g., display a message to the user)
       _isLoading = false;
       notifyListeners();
+      // Navigate to OTP Verification Screen
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => OtpVerificationScreen(email: email)),
+      );
     } catch (e) {
-      // Error handling (e.g., display a snackbar)
       _isLoading = false;
       notifyListeners();
-      // ... display an error message to the user 
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: ${e.toString()}')),
+      );
     }
   }
 }
