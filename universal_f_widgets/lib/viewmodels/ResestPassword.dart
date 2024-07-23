@@ -9,14 +9,20 @@ class ResetPasswordViewModel with ChangeNotifier {
   bool get isLoading => _isLoading;
 
   Future<void> resetPassword(
-      BuildContext context,
-      String username,
-      String newPassword,
-      String repeatNewPassword,
-      ) async {
+    BuildContext context,
+    String username,
+    String newPassword,
+    String repeatNewPassword,
+  ) async {
     if (newPassword != repeatNewPassword) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Passwords do not match')),
+      );
+      return;
+    }
+    if (newPassword.length < 8) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Passwords length is short ')),
       );
       return;
     }
@@ -30,12 +36,11 @@ class ResetPasswordViewModel with ChangeNotifier {
       await authService.resetPassword(username, newPassword);
       _isLoading = false;
       notifyListeners();
-      // Navigate to success page or show success message
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Password reset successful')),
-
       );
-      Navigator.pop(context);
+      Navigator.pushNamedAndRemoveUntil(context, "/login", (bool) => false);
     } catch (e) {
       _isLoading = false;
       notifyListeners();

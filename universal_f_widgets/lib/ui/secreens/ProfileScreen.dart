@@ -1,92 +1,117 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../viewmodels/ProfileViewModel.dart'; // Import ChangeNotifierProvider and Consumer
-// Import your updated ProfileViewModel
+import '../../viewmodels/ProfileViewModel.dart';
+import 'EditProfileScreen.dart'; // Import ChangeNotifierProvider and Consumer
 
-class ProfileScreen extends StatelessWidget {
+
+class ProfilePage extends StatefulWidget {
+  const ProfilePage({Key? key}) : super(key: key);
+
+  @override
+  _ProfilePageState createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<ProfileViewModel>(context, listen: false).fetchProfile();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => ProfileViewModel(),
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('Profile'),
-        ),
-        body: Consumer<ProfileViewModel>(
-          builder: (context, viewModel, child) {
-            return LayoutBuilder(
-              builder: (context, constraints) {
-                if (constraints.maxWidth > 600) {
-                  // Tablet/Desktop layout
-                  return Row(
-                    children: [
-                      Expanded(
-                        child: _buildProfilePicture(viewModel.profilePic),
-                      ),
-                      Expanded(
-                        child: _buildProfileDetails(viewModel),
-                      ),
-                    ],
-                  );
-                } else {
-                  // Mobile layout
-                  return Column(
-                    children: [
-                      _buildProfilePicture(viewModel.profilePic),
-                      _buildProfileDetails(viewModel),
-                    ],
-                  );
-                }
-              },
-            );
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: Text('Profile'),
+      ),
+      body: SafeArea(
+        child: Consumer<ProfileViewModel>(
+          builder: (context, profileViewModel, child) {
+            if (profileViewModel.emailController.text.isEmpty) {
+              return Center(child: CircularProgressIndicator());
+            } else {
+              return SingleChildScrollView(
+                child: Column(
+                  children: [
+                    SizedBox(height: 20),
+                    CircleAvatar(
+                      radius: 70,
+                      backgroundImage: profileViewModel.profilePic.isNotEmpty
+                          ? NetworkImage(profileViewModel
+                          .profilePic) as ImageProvider
+                          : AssetImage('assets/images/avatar.png'),
+                    ),
+                    SizedBox(height: 20),
+                    ProfileInfoRow(
+                      label: 'Name',
+                      value: profileViewModel.firstNameController.text + ' ' +
+                          profileViewModel.lastNameController.text,
+                    ),
+                    ProfileInfoRow(
+                      label: 'User Name',
+                      value: profileViewModel.usernameController.text,
+                    ),
+                    ProfileInfoRow(
+                      label: 'Email',
+                      value: profileViewModel.emailController.text,
+                    ),
+                    ProfileInfoRow(
+                      label: 'Phone',
+                      value: profileViewModel.phoneNumberController.text,
+                    ),
+                    ProfileInfoRow(
+                      label: 'Address',
+                      value: profileViewModel.addressController.text,
+                    ),
+                    ProfileInfoRow(
+                      label: 'Post Code',
+                      value: profileViewModel.countryCodeController.text,
+                    ),
+                    ProfileInfoRow(
+                      label: 'About',
+                      value: profileViewModel.dobController.text,
+                    ),
+                    SizedBox(height: 30),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ProfileEditScreen()),
+                        );
+                      },
+                      child: Text('Edit Profile'),
+                    ),
+                  ],
+                ),
+              );
+            }
           },
         ),
       ),
     );
   }
+}
 
-  Widget _buildProfilePicture(String profilePic) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: CircleAvatar(
-        radius: 50,
-        backgroundImage: profilePic.isNotEmpty
-            ? NetworkImage(profilePic)
-            : AssetImage('assets/images/anonymous.jpg') as ImageProvider,
-      ),
-    );
-  }
+class ProfileInfoRow extends StatelessWidget {
+  final String label;
+  final String value;
 
-  Widget _buildProfileDetails(ProfileViewModel viewModel) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '${viewModel.firstName} ${viewModel.lastName}', // Updated to use separate variables
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 8),
-          Text(viewModel.email),
-          SizedBox(height: 16),
-          _buildDetailRow(Icons.location_on, viewModel.address),
-          _buildDetailRow(Icons.phone, viewModel.phoneNumber), // Updated variable name
-          _buildDetailRow(Icons.work, viewModel.role), // Updated variable name
-        ],
-      ),
-    );
-  }
+  ProfileInfoRow({required this.label, required this.value});
 
-  Widget _buildDetailRow(IconData icon, String detail) {
+  @override
+  Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Icon(icon, size: 20),
-          SizedBox(width: 8),
-          Expanded(child: Text(detail)),
+          Text(label, style: TextStyle(fontWeight: FontWeight.bold)),
+          Text(value),
         ],
       ),
     );
