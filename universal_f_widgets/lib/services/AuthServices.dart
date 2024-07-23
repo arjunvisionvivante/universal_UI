@@ -64,7 +64,7 @@ class AuthService with ChangeNotifier {
   }
   Future<void> forgotPassword(String email) async {
     final response = await _repository.post(
-      path: 'auth/forgat-password/otp',
+      path: 'auth/forgot-password/otp',
       dataMapper: (data) => data,
       data: {
         'username': email,
@@ -78,7 +78,7 @@ class AuthService with ChangeNotifier {
 
   Future<void> verifyOtp(String email, String otp) async {
     final response = await _repository.post(
-      path: 'auth/varify-otp',
+      path: 'auth/verify-otp',
       dataMapper: (data) => data,
       data: {
         'username': email,
