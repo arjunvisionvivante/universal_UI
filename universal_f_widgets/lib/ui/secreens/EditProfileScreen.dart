@@ -61,7 +61,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                   radius: 70,
                   backgroundImage: profileViewModel.profilePic.isNotEmpty
                       ? FileImage(File(profileViewModel.profilePic)) as ImageProvider
-                      : AssetImage('assets/images/avatar.png'),
+                      : AssetImage('assets/images/ananoums.jpg'),
                 ),
               ),
               SizedBox(height: 20),

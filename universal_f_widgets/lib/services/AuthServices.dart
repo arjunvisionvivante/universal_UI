@@ -114,5 +114,20 @@ class AuthService with ChangeNotifier {
       throw Exception(response.message);
     }
   }
-// ... other auth methods (signup, forgot password)
+  Future <void> changePassword(String oldPasword, String newpassword,context) async {
+    final response = await _repository.put(
+        path: "profile/changePassword", dataMapper: (data) => data,
+        data: {
+          "currentPassword": oldPasword,
+          "newPassword": newpassword,
+        });
+    if (!response.isSuccess) {
+      throw Exception(response.message);
+    } else{
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Change paswwword sucess'),closeIconColor: Colors.green,),
+      );
+    }
+  }
 }

@@ -36,7 +36,7 @@ class EndDrawer extends StatelessWidget {
             icon: Icons.lock,
             text: 'Change Password',
             onTap: () {
-              Navigator.pop(context);
+              Navigator.pushNamed(context, "/change-password").then((_)=>Navigator.pop(context));
               // Navigate to Change Password screen
             },
           ),

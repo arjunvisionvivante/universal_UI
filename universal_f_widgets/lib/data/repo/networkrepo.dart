@@ -52,6 +52,29 @@ class NetorkinRepository {
       return BaseResponse.error(e.toString());
     }
   }
+  Future<BaseResponse<T>> put<T>({
+    required String path,
+    required T Function(dynamic) dataMapper,
+    Map<String, dynamic>? queryParameters,
+    dynamic data,
+  }) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token');
+
+      final uri = Uri.parse('$baseUrl$path').replace(queryParameters: queryParameters);
+      final headers = {
+        'Content-Type': 'application/json',
+        if (token != null) 'x-access-token': ' $token',
+      };
+
+      final response = await http.put(uri, headers: headers, body: jsonEncode(data));
+
+      return _handleResponse(response, dataMapper);
+    } catch (e) {
+      return BaseResponse.error(e.toString());
+    }
+  }
 
   BaseResponse<T> _handleResponse<T>(http.Response response, T Function(dynamic) dataMapper) {
     if (response.statusCode >= 200 && response.statusCode < 300) {
