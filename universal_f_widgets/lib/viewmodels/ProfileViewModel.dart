@@ -2,12 +2,14 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import '../data/repo/networkrepo.dart'; // Import your networkin repository
+import '../data/repo/networkrepo.dart';
 
 class ProfileViewModel with ChangeNotifier {
   String? countryCode;
   bool isLoading=false;
+String ctr_code="";
   final emailController = TextEditingController();
+String picture="";
   String profilePic = '';
   String firstName = '';
   String lastName = '';
@@ -26,6 +28,7 @@ class ProfileViewModel with ChangeNotifier {
   final latController =TextEditingController();
   final  longController=TextEditingController();
   final cityController=TextEditingController();
+
   final NetorkinRepository _repository =
       NetorkinRepository("http://nodemaster.visionvivante.com:4040/");
 
@@ -44,12 +47,14 @@ class ProfileViewModel with ChangeNotifier {
       // Adjust the data mapper based on your response structure
     );
 
+
     if (response.isSuccess) {
       // Parse and use the data
       final profileData = response.data;
       print(profileData.runtimeType);
       // Update instance variables based on response
       profilePic = profileData["profile_pic"] ?? '';
+      picture=profileData["profile_pic"] ?? '';
       firstName = profileData['first_name'] ?? '';
       lastName = profileData['last_name'] ?? '';
       email = profileData['email'] ?? '';
@@ -57,6 +62,7 @@ class ProfileViewModel with ChangeNotifier {
       address = profileData['address'] ?? '';
       phoneNumber = profileData['phone_number']?.toString() ?? '';
       role = profileData['role'] ?? '';
+      ctr_code=profileData['country_code'];
       emailController.text = profileData['email'] ?? '';
       firstNameController.text = profileData['first_name'] ?? '';
       lastNameController.text = profileData['last_name'] ?? '';
@@ -65,7 +71,7 @@ class ProfileViewModel with ChangeNotifier {
       phoneNumberController.text =  profileData['phone_number'].toString() ?? '';
       countryCodeController.text = profileData['country_code'] ?? '';
       usernameController.text = profileData['username'] ?? '';
-      profilePic = profileData['profile_pic'] ?? '';
+
       notifyListeners();
     } else {
       // Handle error
@@ -98,26 +104,54 @@ class ProfileViewModel with ChangeNotifier {
     }
     notifyListeners();
   }
+
+  Map<String, dynamic> getChangedValues() {
+
+    Map<String, dynamic> changedValues = {};
+    if (firstNameController.text != firstName) {
+      changedValues['first_name'] = firstNameController.text;
+    }
+    if (lastNameController.text != lastName) {
+      changedValues['last_name'] = lastNameController.text;
+    }
+    if (dobController.text != dob) {
+      changedValues['dob'] = dobController.text;
+    }
+    if (addressController.text != address) {
+      changedValues['address'] = addressController.text;
+    }
+    if (phoneNumberController.text != phoneNumber) {
+      changedValues['phone_number'] = phoneNumberController.text;
+    }
+    if (countryCodeController.text != ctr_code) {
+      changedValues['country_code'] = countryCodeController.text;
+    }
+
+
+    return changedValues;
+  }
+
+
   Future<void> updateProfile(BuildContext context) async {
     final path = 'profile/edit';
     isLoading=true;
     notifyListeners();
-    final data = {
-      'email': emailController.text,
-      'first_name': firstNameController.text,
-      'last_name': lastNameController.text,
-      'dob': dobController.text,
-      'address': addressController.text,
-      'phone_number': phoneNumberController.text,
-      'country_code': countryCodeController.text,
-      'username': usernameController.text,
-      'profile_pic': profilePic,
-    };
-
+    // final data = {
+    //   'email': emailController.text,
+    //   'first_name': firstNameController.text,
+    //   'last_name': lastNameController.text,
+    //   'dob': dobController.text,
+    //   'address': addressController.text,
+    //   'phone_number': phoneNumberController.text,
+    //   'country_code': countryCodeController.text,
+    //   'username': usernameController.text,
+    //   'profile_pic': profilePic,
+    // };
+    final changedValues = getChangedValues();
     try {
-      final response = await _repository.post(
+      final response = await _repository.put(
         path: path,
-        data: data,
+        data: changedValues,
         dataMapper: (data) => data,
       );
 

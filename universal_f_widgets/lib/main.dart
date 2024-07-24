@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:universal_f_widgets/services/AuthServices.dart';
+import 'package:universal_f_widgets/ui/secreens/ChangePasswordSecreen.dart';
 import 'package:universal_f_widgets/ui/secreens/ForgotPasswordScreen.dart';
 import 'package:universal_f_widgets/ui/secreens/HomeScreen.dart';
 import 'package:universal_f_widgets/ui/secreens/LoginScreen.dart';
@@ -60,7 +61,8 @@ class MyApp extends StatelessWidget {
         '/forgot-password': (context) => ForgotPasswordScreen(),
         '/profile': (context) => ProfilePage(),
         '/login': (context) => LoginScreen(),
-        '/home': (context) => HomePage()
+        '/home': (context) => HomePage(),
+        '/change-password':(context)=>ChangePaswordPage(),
       },
     );
   }

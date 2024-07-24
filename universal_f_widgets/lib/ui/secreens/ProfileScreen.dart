@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import '../../viewmodels/ProfileViewModel.dart';
 import 'EditProfileScreen.dart'; // Import ChangeNotifierProvider and Consumer
 
-
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
 
@@ -41,19 +40,17 @@ class _ProfilePageState extends State<ProfilePage> {
                     CircleAvatar(
                       radius: 70,
                       backgroundImage: profileViewModel.profilePic.isNotEmpty
-                          ? NetworkImage(profileViewModel
-                          .profilePic) as ImageProvider
-                          : AssetImage('assets/images/avatar.png'),
+                          ? NetworkImage(profileViewModel.profilePic)
+                              as ImageProvider
+                          : AssetImage('assets/images/ananoums.jpg'),
                     ),
                     SizedBox(height: 20),
                     ProfileInfoRow(
-                      label: 'Name',
-                      value: profileViewModel.firstNameController.text + ' ' +
-                          profileViewModel.lastNameController.text,
-                    ),
+                        label: 'First Name',
+                        value: profileViewModel.firstNameController.text),
                     ProfileInfoRow(
-                      label: 'User Name',
-                      value: profileViewModel.usernameController.text,
+                      label: 'Last Name',
+                      value: profileViewModel.lastNameController.text,
                     ),
                     ProfileInfoRow(
                       label: 'Email',
