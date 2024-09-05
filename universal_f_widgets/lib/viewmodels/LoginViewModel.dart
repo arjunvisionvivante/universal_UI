@@ -4,12 +4,13 @@ import 'package:provider/provider.dart';
 import 'package:universal_f_widgets/services/AuthServices.dart';
 
 class LoginViewModel with ChangeNotifier {
-  final formKey = GlobalKey<FormState>(); // Define _formKey here
+  final formKey = GlobalKey<FormState>();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();// Define _formKey here
   bool _isLoading = false;
 
   // Input controllers
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
+
 
   // ... getters and setters for controllers
 

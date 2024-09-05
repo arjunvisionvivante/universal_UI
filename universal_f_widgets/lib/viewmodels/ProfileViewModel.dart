@@ -1,10 +1,14 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:mime/mime.dart';
 import '../data/repo/networkrepo.dart';
 
 class ProfileViewModel with ChangeNotifier {
+  final NetorkinRepository _repository =
+  NetorkinRepository("http://nodemaster.visionvivante.com:4040/");
   String? countryCode;
   bool isLoading=false;
 String ctr_code="";
@@ -29,8 +33,7 @@ String picture="";
   final  longController=TextEditingController();
   final cityController=TextEditingController();
 
-  final NetorkinRepository _repository =
-      NetorkinRepository("http://nodemaster.visionvivante.com:4040/");
+
 
   ProfileViewModel() {
     // Initialize with fetching profile or other initial data if necessary
@@ -130,23 +133,41 @@ String picture="";
 
     return changedValues;
   }
+  Future<void> updateProfilePic(String imagePath) async {
+    final path = 'profile/edit';
+    final file = File(imagePath);
+
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await _repository.putMultipart(
+        path: path,
+        dataMapper: (data) => data,
+        file: file,
+        fileField: 'profile_pic',
+      );
+
+      if (response.isSuccess) {
+        profilePic = imagePath;
+        notifyListeners();
+        // Handle successful update, e.g., show a success message
+      } else {
+        // Handle error
+        print('Error: ${response.data}');
+      }
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
 
 
   Future<void> updateProfile(BuildContext context) async {
     final path = 'profile/edit';
     isLoading=true;
     notifyListeners();
-    // final data = {
-    //   'email': emailController.text,
-    //   'first_name': firstNameController.text,
-    //   'last_name': lastNameController.text,
-    //   'dob': dobController.text,
-    //   'address': addressController.text,
-    //   'phone_number': phoneNumberController.text,
-    //   'country_code': countryCodeController.text,
-    //   'username': usernameController.text,
-    //   'profile_pic': profilePic,
-    // };
+
     final changedValues = getChangedValues();
     try {
       final response = await _repository.put(
