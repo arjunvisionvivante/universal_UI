@@ -54,7 +54,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                 onTap: () async {
                   final pickedFile = await picker.pickImage(source: ImageSource.gallery);
                   if (pickedFile != null) {
-                    profileViewModel.setProfilePic(pickedFile.path);
+                    await profileViewModel.updateProfilePic(pickedFile.path);
                   }
                 },
                 child: CircleAvatar(
